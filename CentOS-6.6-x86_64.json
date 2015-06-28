@@ -1,0 +1,45 @@
+{
+    "builders":[{
+        "type": "virtualbox-iso",
+        "guest_os_type": "RedHat_64",
+        "iso_url": "CentOS-6.6-x86_64-bin-DVD1.iso",
+        "iso_checksum": "7b1fb1a11499b31271ded79da6af8584",
+        "iso_checksum_type": "md5",
+        "ssh_username": "vagrant",
+        "ssh_password": "vagrant",
+        "ssh_wait_timeout": "3000s",
+        "vm_name": "development-{{isotime \"20060102150405\"}}",
+        "format": "ova",
+        "output_directory": "output-{{isotime \"20060102150405\"}}",
+        "format": "ova",
+        "http_directory": "./",
+        "shutdown_command": "sudo /sbin/poweroff",
+        "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+        "virtualbox_version_file": ".vbox_version",
+        "boot_wait": "10s",
+        "boot_command": [
+            "<esc><wait>",
+            "linux ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg ksdevice=eth0 ",
+            "<enter><wait>"
+        ],
+        "vboxmanage": [
+            ["modifyvm", "{{.Name}}", "--memory", "2048"],
+            ["modifyvm", "{{.Name}}", "--cpus", "2"],
+            ["modifyvm", "{{.Name}}", "--vram", "10"]
+        ]
+    }],
+    "provisioners": [
+        {
+            "type": "shell",
+            "scripts": [
+                "provision.sh"
+            ]
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "output": "./CentOS-6.6-x86_64-ja.box"
+        }
+    ]
+}
